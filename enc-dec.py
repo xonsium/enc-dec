@@ -10,12 +10,13 @@ import argparse
 
 # all arguments
 arg_parser = argparse.ArgumentParser(prog='Enc', usage='%(prog)s [options] path')
-arg_parser.add_argument('-p', '--path', type=str, help='Path to all files', required=True, metavar='')
-arg_parser.add_argument('-r', '--rename', type=bool, help='Rename all the files', default=True, metavar='')
-arg_parser.add_argument('-d', '--delete', type=bool, help='Deletes unencrypted files', default=True, metavar='')
+arg_parser.add_argument('-f', '--file', type=str, help='File name', required=True, metavar='')
+arg_parser.add_argument('-r', '--rename', type=bool, help='Rename all the files', default=False, metavar='')
+arg_parser.add_argument('-d', '--delete', type=bool, help='Deletes unencrypted files', default=False, metavar='')
 arg_parser.add_argument('-a', '--action', type=str, help='enc or dec', required=True, metavar='')
 
 args = arg_parser.parse_args()
+file_name = args.file
 
 
 def key_func():
@@ -36,77 +37,59 @@ def key_func():
     return key
 
 
-def change_path():
-    # changes path to the --path argument.
-    path = args.path
-    os.chdir(path=path)
-
-
-def rename():
-    # renames all files if --rename/-r is True.(default=True)
-    for file_name in os.listdir():
-        ext = os.path.splitext(file_name)[1]
-        new_name = sha1(file_name.encode()).hexdigest() + ext
-        os.rename(file_name, new_name)
-
-
 def encrypt(key):
     fernet = Fernet(key)
-    for file_name in os.listdir():
-        ext = os.path.splitext(file_name)[1]
-        if args.rename:
-            encrypted_name = sha1(file_name.encode()).hexdigest() + ext
-        else:
-            encrypted_name = file_name
-        with open(file_name, 'rb') as file:
-            original = file.read()
+    file, ext = os.path.splitext(file_name)
+    file = file.split('\\' or '/')[-1]
 
-        encrypted = fernet.encrypt(original)
+    if args.rename:
+        encrypted_name = sha1(file_name.encode()).hexdigest() + ext
+    else:
+        encrypted_name = file + '(enc)' + ext
+    with open(file_name, 'rb') as file:
+        original = file.read()
 
-        # deletes unencrypted files if --delete/-d is True.(default=False)
-        if args.delete:
-            os.remove(file_name)
-        else:
-            pass
+    encrypted = fernet.encrypt(original)
 
-        with open(encrypted_name, 'wb') as file:
-            file.write(encrypted)
+    # deletes the unencrypted file if --delete/-d is True.(default=False)
+    if args.delete:
+        os.remove(file_name)
+    else:
+        pass
+
+    with open(encrypted_name, 'wb') as file:
+        file.write(encrypted)
 
 
 def decrypt(key):
     fernet = Fernet(key)
-    for file_name in os.listdir():
-        ext = os.path.splitext(file_name)[1]
+    file, ext = os.path.splitext(file_name)
+    file = file.split('\\' or '/')[-1]
 
-        if args.rename:
-            decrypted_name = sha1(file_name.encode()).hexdigest() + ext
-        else:
-            decrypted_name = file_name
+    if args.rename:
+        decrypted_name = sha1(file_name.encode()).hexdigest() + ext
+    else:
+        decrypted_name = file_name + '(dec)' + ext
 
-        with open(file_name, 'rb') as file:
-            encrypted_file = file.read()
+    with open(file_name, 'rb') as file:
+        encrypted_file = file.read()
 
-        decrypted = fernet.decrypt(encrypted_file)
+    decrypted = fernet.decrypt(encrypted_file)
 
-        # deletes encrypted files if --delete/-d is True.(default=False)
-        if args.delete:
-            os.remove(file_name)
-        else:
-            pass
+    # deletes the encrypted file if --delete/-d is True.(default=False)
+    if args.delete:
+        os.remove(file_name)
+    else:
+        pass
 
-        with open(decrypted_name, 'wb') as file:
-            file.write(decrypted)
+    with open(decrypted_name, 'wb') as file:
+        file.write(decrypted)
 
 
 if __name__ == "__main__":
-    change_path()
     key_pass = key_func()
     if args.action == 'enc':
-        if args.rename:
-            rename()
         encrypt(key_pass)
     elif args.action == 'dec':
-        if args.rename:
-            rename()
         decrypt(key_pass)
 
