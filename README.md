@@ -1,7 +1,7 @@
 # enc-dec
 Python CLI tool for Encrypting and Decrypting file.
 
-##Usage
+## Usage
 ```console
 $ python .\enc-dec.py --help
   usage: enc-dec [options] path
