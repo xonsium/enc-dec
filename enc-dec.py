@@ -11,8 +11,8 @@ import argparse
 # all arguments
 arg_parser = argparse.ArgumentParser(prog='Enc', usage='%(prog)s [options] path')
 arg_parser.add_argument('-f', '--file', type=str, help='File name', required=True, metavar='')
-arg_parser.add_argument('-r', '--rename', type=bool, help='Rename all the files', default=False, metavar='')
-arg_parser.add_argument('-d', '--delete', type=bool, help='Deletes unencrypted files', default=False, metavar='')
+arg_parser.add_argument('-r', '--rename', type=bool, help='Rename the file', default=False, metavar='')
+arg_parser.add_argument('-d', '--delete', type=bool, help='Delete unencrypted file', default=False, metavar='')
 arg_parser.add_argument('-a', '--action', type=str, help='enc or dec', required=True, metavar='')
 
 args = arg_parser.parse_args()
