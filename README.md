@@ -1,6 +1,10 @@
 # enc-dec
 Python CLI tool for Encrypting and Decrypting file.
 
+<p align="center">
+<img src="./images/demo.gif"/>
+</p>
+
 ## Usage
 ```console
 $ python .\enc-dec.py --help
