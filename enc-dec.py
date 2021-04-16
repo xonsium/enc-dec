@@ -9,7 +9,7 @@ from hashlib import sha1
 import argparse
 
 # all arguments
-arg_parser = argparse.ArgumentParser(prog='Enc', usage='%(prog)s [options] path')
+arg_parser = argparse.ArgumentParser(prog='Enc-Dec', usage='%(prog)s [options]')
 arg_parser.add_argument('-f', '--file', type=str, help='File name', required=True, metavar='')
 arg_parser.add_argument('-r', '--rename', type=bool, help='Rename the file', default=False, metavar='')
 arg_parser.add_argument('-d', '--delete', type=bool, help='Delete unencrypted file', default=False, metavar='')
