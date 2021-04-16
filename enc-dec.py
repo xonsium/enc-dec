@@ -7,6 +7,7 @@ import getpass
 import os
 from hashlib import sha1
 import argparse
+import cryptography
 
 # all arguments
 arg_parser = argparse.ArgumentParser(prog='Enc-Dec', usage='%(prog)s [options]')
@@ -73,17 +74,18 @@ def decrypt(key):
 
     with open(file_name, 'rb') as file:
         encrypted_file = file.read()
+    try:
+        decrypted = fernet.decrypt(encrypted_file)
+            # deletes the encrypted file if --delete/-d is True.(default=False)
+        if args.delete:
+            os.remove(file_name)
+        else:
+            pass
 
-    decrypted = fernet.decrypt(encrypted_file)
-
-    # deletes the encrypted file if --delete/-d is True.(default=False)
-    if args.delete:
-        os.remove(file_name)
-    else:
-        pass
-
-    with open(decrypted_name, 'wb') as file:
-        file.write(decrypted)
+        with open(decrypted_name, 'wb') as file:
+            file.write(decrypted)
+    except cryptography.fernet.InvalidToken:
+        print('Wrong password')
 
 
 if __name__ == "__main__":
